@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserResource;
-use App\Models\Organisation;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class RegisterController
 {
@@ -32,17 +32,20 @@ class RegisterController
                 'password' => $input['password'],
             ]);
 
-            $organisation = Organisation::create([
-                'name' => $user->first_name . '\'s Organisation',
-                'description' => 'Default organisation',
+            $user->ownedOrganisations()->create([
+                'user_id' => $user->id,
+                'name' => $user->first_name.'\'s Organisation',
+                'description' => 'Default Organisation',
             ]);
-
-            $organisation->members()->attach($user);
 
             return $user;
         });
 
-        $token = auth()->login($user);
+        if (! $token = auth()->login($user)) {
+            throw new BadRequestHttpException(
+                message: 'Registration unsuccessful',
+            );
+        }
 
         return response()->json([
             'status' => 'success',

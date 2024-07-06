@@ -31,14 +31,14 @@ test('user can create an account and has default organisation', function () {
     $this->assertDatabaseCount('users', 1);
     $this->assertDatabaseHas('organisations', [
         'name' => 'John\'s Organisation',
-        'description' => 'Default organisation',
+        'description' => 'Default Organisation',
     ]);
 });
 
 test('user cannot create account with duplicate email', function () {
     $existingUser = User::factory()->create();
 
-    $response = $this->postJson('auth/register', [
+    $this->postJson('auth/register', [
         'firstName' => 'John',
         'lastName' => 'Doe',
         'email' => $existingUser->email,
@@ -61,4 +61,6 @@ test('user cannot create account with duplicate phone', function () {
     ]);
 
     $response->assertStatus(422);
+
+    $this->assertGuest();
 });

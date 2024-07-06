@@ -17,7 +17,7 @@ class OrganisationController
         /** @var \App\Models\User $user */
         $user = auth()->user();
 
-        $organisations = $user->organisations->sortBy('name');
+        $organisations = $user->allOrganisations();
 
         return response()->json([
             'status' => 'success',
@@ -27,8 +27,10 @@ class OrganisationController
             ],
         ]);
     }
+
     public function store(Request $request): JsonResponse
     {
+        /** @var \App\Models\User $user */
         $user = auth()->user();
 
         $input = Validator::make($request->input(), [
@@ -36,10 +38,10 @@ class OrganisationController
             'description' => ['required', 'string'],
         ])->validate();
 
-        $organisation = Organisation::create($input);
-
-        // Attach current user to organisation
-        $organisation->members()->attach($user->id);
+        $organisation = $user->ownedOrganisations()->create([
+            'name' => $input['name'],
+            'description' => $input['description'],
+        ]);
 
         return response()->json([
             'status' => 'success',

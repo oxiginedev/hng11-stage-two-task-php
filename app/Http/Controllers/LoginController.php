@@ -6,7 +6,7 @@ use App\Http\Resources\UserResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class LoginController
 {
@@ -18,9 +18,9 @@ class LoginController
         ])->validate();
 
         if (! $token = auth()->attempt($input)) {
-            throw ValidationException::withMessages([
-                'email' => [__('auth.failed')],
-            ]);
+            throw new BadRequestHttpException(
+                message: 'Authentication failed',
+            );
         }
 
         return response()->json([

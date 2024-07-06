@@ -20,7 +20,7 @@ class OrganisationUserController
 
         $otherUser = User::findOrFail($userId);
 
-        $allowed = $user->organisations->contains(function ($organisation) use ($otherUser) {
+        $allowed = $user->allOrganisations->contains(function ($organisation) use ($otherUser) {
             return $organisation->hasUserWithId($otherUser->id);
         });
 

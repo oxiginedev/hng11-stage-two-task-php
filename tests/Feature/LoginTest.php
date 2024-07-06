@@ -34,7 +34,8 @@ test('user cannot login with invalid credentials', function () {
     $this->postJson('auth/login', [
         'email' => $user->email,
         'password' => 'wrong-password',
-    ]);
+    ])
+        ->assertStatus(400);
 
     $this->assertGuest();
 });

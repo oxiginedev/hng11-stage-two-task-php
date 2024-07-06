@@ -24,9 +24,4 @@ test('user can create an organisation', function () {
         'name' => 'Test Organisation',
         'description' => 'This is a test organisation',
     ]);
-
-    $this->assertDatabaseHas('organisation_user', [
-        'user_id' => $user->id,
-        'organisation_id' => $response->json('data.orgId'),
-    ]);
 });
