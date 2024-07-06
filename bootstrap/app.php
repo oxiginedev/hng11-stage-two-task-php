@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -31,5 +32,11 @@ return Application::configure(basePath: dirname(__DIR__))
                     'errors' => $exception->validator->errors(),
                 ], 422);
             }
+
+            Log::error($exception->getMessage(), ['exception' => $exception]);
+
+            return response()->json([
+                'message' => 'something really bad happened',
+            ], 500);
         });
     })->create();
