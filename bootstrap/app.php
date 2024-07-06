@@ -14,7 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
         apiPrefix: '',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->trustProxies("*");
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->renderable(function (\Throwable $exception) {
