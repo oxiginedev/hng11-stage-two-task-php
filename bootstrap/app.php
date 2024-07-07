@@ -34,9 +34,5 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             Log::error($exception->getMessage(), ['exception' => $exception]);
-
-            return response()->json([
-                'message' => 'something really bad happened',
-            ], 500);
         });
     })->create();
