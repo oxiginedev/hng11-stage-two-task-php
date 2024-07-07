@@ -6,6 +6,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -31,6 +32,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'errors' => $exception->validator->errors(),
                 ], 422);
+            }
+
+            if ($exception instanceof HttpException) {
+                return response()->json([
+                    'status' => 'Bad Request',
+                    'message' => $exception->getMessage(),
+                    'statusCode' => $exception->getStatusCode(),
+                ], $exception->getStatusCode());
             }
 
             Log::error($exception->getMessage(), ['exception' => $exception]);
