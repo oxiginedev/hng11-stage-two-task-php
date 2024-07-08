@@ -20,11 +20,11 @@ class OrganisationUserController
 
         $otherUser = User::findOrFail($userId);
 
-        $allowed = $user->allOrganisations->contains(function ($organisation) use ($otherUser) {
+        $allowed = $user->allOrganisations()->contains(function ($organisation) use ($otherUser) {
             return $organisation->hasUserWithId($otherUser->id);
         });
 
-        abort_unless($allowed, Response::HTTP_NOT_FOUND, 'User not found');
+        abort_unless(($allowed || $user->id === $userId), Response::HTTP_NOT_FOUND, 'User not found');
 
         return response()->json([
             'status' => 'success',
