@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -43,6 +44,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'errors' => $errors,
                 ], 422);
+            }
+
+            if ($exception instanceof AuthenticationException) {
+                return response()->json([
+                    'status' => 'Bad Request',
+                    'message' => 'Client error',
+                    'statusCode' => 400,
+                ], 400);
             }
 
             if ($exception instanceof HttpException) {
