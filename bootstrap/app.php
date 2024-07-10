@@ -30,16 +30,13 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             if ($exception instanceof ValidationException) {
-                $errors = [];
-
-                /** @var \Illuminate\Support\MessageBag $messageBag */
-                $messageBag = $exception->validator->errors();
-                foreach ($messageBag->messages() as $field => $message) {
-                    $errors[] = [
-                        'field' => $field,
-                        'message' => $message[0]
-                    ];
-                }
+                $errors = collect($exception->validator->errors()->all())
+                    ->map(function ($field, $message) {
+                        return [
+                            'field' => $field,
+                            'message' => $message[0]
+                        ];
+                    });
 
                 return response()->json([
                     'errors' => $errors,
